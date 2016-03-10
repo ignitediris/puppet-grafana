@@ -23,12 +23,20 @@
       "operatingsystemrelease": [ "6.0" ]
     },
     {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [ "7.0" ]
+    },
+    {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [ "14.04" ]
     },
     {
       "operatingsystem": "Debian",
       "operatingsystemrelease": [ "7.0" ]
+    },
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [ "8.0" ]
     }
   ],
   "requirements": [

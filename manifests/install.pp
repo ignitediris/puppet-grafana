@@ -47,8 +47,11 @@ class grafana::install {
     'repo': {
       case $::osfamily {
         'Debian': {
-          package { 'libfontconfig1':
-            ensure => present
+          package {
+            'libfontconfig1':
+              ensure => present;
+            'apt-transport-https':
+              ensure => present;
           }
 
           if ( $::grafana::manage_package_repo ){
@@ -57,13 +60,14 @@ class grafana::install {
             }
             apt::source { 'grafana':
               location => 'https://packagecloud.io/grafana/stable/debian',
-              release  => 'wheezy',
+              release  => $::os['distro']['codename'],
               repos    => 'main',
               key      =>  {
                 'id'     => '418A7F2FB0E1E6E7EABF6FE8C2E73424D59097AB',
                 'source' => 'https://packagecloud.io/gpg.key'
               },
               before   => Package[$::grafana::package_name],
+              require  => Package['apt-transport-https'],
             }
             Class['apt::update'] -> Package[$::grafana::package_name]
           }
@@ -75,22 +79,22 @@ class grafana::install {
         }
         'RedHat': {
           package { 'fontconfig':
-            ensure => present
+              ensure => present
           }
 
           if ( $::grafana::manage_package_repo ){
             yumrepo { 'grafana':
               descr    => 'grafana repo',
-              baseurl  => 'https://packagecloud.io/grafana/stable/el/6/$basearch',
-              gpgcheck => 1,
-              gpgkey   => 'https://packagecloud.io/gpg.key https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana',
+              baseurl  => "https://packagecloud.io/grafana/stable/el/${::os['release']['major']}/\$basearch",
+              gpgcheck => 0,
+              gpgkey   => 'https://packagecloud.io/grafana/stable/gpgkey',
               enabled  => 1,
               before   => Package[$::grafana::package_name],
             }
           }
 
           package { $::grafana::package_name:
-            ensure  => "${::grafana::version}-${::grafana::rpm_iteration}",
+            ensure  => $::grafana::version,
             require => Package['fontconfig']
           }
         }
